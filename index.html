@@ -16,8 +16,8 @@
     </table>
 
     <script>
-        // Cargar y mostrar datos desde datos.csv
-        d3.csv("datos.csv").then(data => {
+        // Cargar y mostrar datos desde datos.csv con delimitador ;
+        d3.dsv(";", "datos.csv").then(data => {
             // Extraer las cabeceras de las columnas
             const headers = Object.keys(data[0]);
             const headerRow = d3.select("#table-header");
