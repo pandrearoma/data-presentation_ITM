@@ -17,7 +17,7 @@
 
     <script>
         // Cargar y mostrar datos desde datos.csv
-        d3.csv("datos.csv").then(data => {
+        d3.csv("MEN_ESTADISTICAS_MATRICULA_POR_MUNICIPIOS_ES_20241031.csv").then(data => {
             // Extraer las cabeceras de las columnas
             const headers = Object.keys(data[0]);
             const headerRow = d3.select("#table-header");
