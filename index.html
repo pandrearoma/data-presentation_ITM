@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualización de Datos</title>
+    <title>Visualización de Datos con Filtros</title>
     <script src="https://d3js.org/d3.v6.min.js"></script>
 </head>
 <body>
-    <h1>Datos desde datos.csv</h1>
+    <h1>Datos desde datos.json con Filtros</h1>
+    <div id="filters"></div> <!-- Contenedor para los filtros -->
     <table id="data-table" border="1">
         <thead>
             <tr id="table-header"></tr>
@@ -15,23 +16,73 @@
         <tbody id="table-body"></tbody>
     </table>
 
-   <script>
-    d3.json("datos.json").then(data => {
-        const headers = Object.keys(data[0]);
-        const headerRow = d3.select("#table-header");
-        headers.forEach(header => {
-            headerRow.append("th").text(header);
-        });
+    <script>
+        // Cargar y mostrar datos desde datos.json
+        let rawData = [];
+        d3.json("datos.json").then(data => {
+            rawData = data;  // Guardamos los datos originales para filtrarlos
+            createTable(data);  // Creamos la tabla inicial
+            createFilters(data);  // Creamos los filtros
+        }).catch(error => console.log("Error cargando el archivo JSON:", error));
 
-        const body = d3.select("#table-body");
-        data.forEach(row => {
-            const tableRow = body.append("tr");
+        // Función para crear la tabla
+        function createTable(data) {
+            // Limpiar la tabla antes de agregar filas
+            d3.select("#table-body").html("");
+
+            // Extraer las cabeceras de las columnas
+            const headers = Object.keys(data[0]);
+            const headerRow = d3.select("#table-header");
+            headerRow.html(""); // Limpiar encabezados previos
             headers.forEach(header => {
-                tableRow.append("td").text(row[header]);
+                headerRow.append("th").text(header);
             });
-        });
-    }).catch(error => console.log("Error cargando el archivo JSON:", error));
-</script>
 
+            // Llenar la tabla con datos
+            const body = d3.select("#table-body");
+            data.forEach(row => {
+                const tableRow = body.append("tr");
+                headers.forEach(header => {
+                    tableRow.append("td").text(row[header]);
+                });
+            });
+        }
+
+        // Función para crear los filtros
+        function createFilters(data) {
+            const headers = Object.keys(data[0]);
+            const filtersDiv = d3.select("#filters");
+            filtersDiv.html(""); // Limpiar filtros previos
+
+            headers.forEach(header => {
+                const filterContainer = filtersDiv.append("div");
+                filterContainer.append("label").text(`Filtrar por ${header}: `);
+                filterContainer.append("input")
+                    .attr("type", "text")
+                    .attr("id", `filter-${header}`)
+                    .on("input", applyFilters);  // Aplicar filtro al cambiar valor
+            });
+        }
+
+        // Función para aplicar los filtros
+        function applyFilters() {
+            let filteredData = rawData;
+
+            // Iterar sobre cada filtro y filtrar los datos
+            d3.selectAll("#filters input").each(function() {
+                const header = this.id.replace("filter-", "");  // Obtener el nombre del encabezado
+                const value = this.value.toLowerCase();
+
+                if (value) {  // Si hay valor en el filtro, aplicar filtro
+                    filteredData = filteredData.filter(row => 
+                        row[header].toLowerCase().includes(value)
+                    );
+                }
+            });
+
+            // Mostrar los datos filtrados en la tabla
+            createTable(filteredData);
+        }
+    </script>
 </body>
 </html>
