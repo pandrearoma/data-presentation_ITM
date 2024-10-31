@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualización de Datos</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+<body>
+    <h1>Datos desde datos.csv</h1>
+    <table id="data-table" border="1">
+        <thead>
+            <tr id="table-header"></tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+    </table>
+
+    <script>
+        // Cargar y mostrar datos desde datos.csv
+        d3.csv("datos.csv").then(data => {
+            // Extraer las cabeceras de las columnas
+            const headers = Object.keys(data[0]);
+            const headerRow = d3.select("#table-header");
+            headers.forEach(header => {
+                headerRow.append("th").text(header);
+            });
+
+            // Llenar la tabla con datos
+            const body = d3.select("#table-body");
+            data.forEach(row => {
+                const tableRow = body.append("tr");
+                headers.forEach(header => {
+                    tableRow.append("td").text(row[header]);
+                });
+            });
+        }).catch(error => console.log("Error cargando el archivo CSV:", error));
+    </script>
+</body>
+</html>
