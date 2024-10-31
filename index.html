@@ -5,10 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualización de Datos en Tabla</title>
     <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        /* Estilos mínimos para asegurar la estructura de la tabla */
+        #data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        #data-table th, #data-table td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        #data-table th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
     <h1>Datos desde datos.json</h1>
-    <table id="data-table" border="1">
+    <table id="data-table">
         <thead>
             <tr id="table-header"></tr>
         </thead>
@@ -30,12 +45,13 @@
             data.forEach(row => {
                 const tableRow = body.append("tr");  // Crear una nueva fila para cada entrada
                 headers.forEach(header => {
-                    tableRow.append("td").text(row[header]);  // Añadir cada valor en su columna correspondiente
+                    tableRow.append("td").text(row[header] || "");  // Añadir cada valor en su columna correspondiente
                 });
             });
         }).catch(error => console.log("Error cargando el archivo JSON:", error));
     </script>
 </body>
 </html>
+
 
 
