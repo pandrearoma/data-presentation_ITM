@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualización de Datos en CSV</title>
+    <title>Visualización de Datos en CSV con Filtros</title>
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <style>
         /* Estilos mínimos para asegurar la estructura de la tabla */
@@ -19,36 +19,85 @@
         #data-table th {
             background-color: #f2f2f2;
         }
+        .filter-input {
+            width: 90%;
+            padding: 4px;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
-    <h1>Datos desde datos.csv</h1>
+    <h1>Datos desde datos.csv con Filtros</h1>
     <table id="data-table">
         <thead>
             <tr id="table-header"></tr>
+            <tr id="filter-row"></tr>
         </thead>
         <tbody id="table-body"></tbody>
     </table>
 
     <script>
-        // Cargar y mostrar datos desde datos.csv
+        let rawData = []; // Almacenará los datos originales
+
         d3.csv("datos.csv").then(data => {
-            // Crear encabezados de la tabla
+            rawData = data;  // Guarda los datos originales para los filtros
+            createTable(data);  // Crea la tabla inicial
+            createFilters(data);  // Crea los filtros en la tabla
+        }).catch(error => console.log("Error cargando el archivo CSV:", error));
+
+        function createTable(data) {
             const headers = Object.keys(data[0]);
             const headerRow = d3.select("#table-header");
+            headerRow.html(""); // Limpiar encabezados previos
             headers.forEach(header => {
                 headerRow.append("th").text(header);
             });
 
-            // Llenar la tabla con datos
+            // Limpiar cuerpo de la tabla y llenar con datos
             const body = d3.select("#table-body");
+            body.html("");  // Limpiar contenido previo
             data.forEach(row => {
-                const tableRow = body.append("tr");  // Crear una nueva fila para cada entrada
+                const tableRow = body.append("tr");
                 headers.forEach(header => {
-                    tableRow.append("td").text(row[header] || "");  // Añadir cada valor en su columna correspondiente
+                    tableRow.append("td").text(row[header]);
                 });
             });
-        }).catch(error => console.log("Error cargando el archivo CSV:", error));
+        }
+
+        function createFilters(data) {
+            const headers = Object.keys(data[0]);
+            const filterRow = d3.select("#filter-row");
+            filterRow.html(""); // Limpiar filtros previos
+
+            headers.forEach(header => {
+                const filterCell = filterRow.append("th");
+                filterCell.append("input")
+                    .attr("type", "text")
+                    .attr("placeholder", `Filtrar ${header}`)
+                    .attr("class", "filter-input")
+                    .attr("id", `filter-${header}`)
+                    .on("input", applyFilters);  // Aplicar filtro al cambiar valor
+            });
+        }
+
+        function applyFilters() {
+            let filteredData = rawData;
+
+            // Iterar sobre cada filtro de entrada
+            d3.selectAll(".filter-input").each(function() {
+                const header = this.id.replace("filter-", "");  // Obtener el nombre del encabezado
+                const value = this.value.toLowerCase();  // Valor del filtro en minúscula
+
+                if (value) {
+                    filteredData = filteredData.filter(row => 
+                        row[header].toLowerCase().includes(value)  // Filtro parcial por texto
+                    );
+                }
+            });
+
+            // Mostrar los datos filtrados en la tabla
+            createTable(filteredData);
+        }
     </script>
 </body>
 </html>
