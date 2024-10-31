@@ -15,25 +15,23 @@
         <tbody id="table-body"></tbody>
     </table>
 
-    <script>
-        // Cargar y mostrar datos desde datos.csv con delimitador ;
-        d3.dsv(";", "datos.csv").then(data => {
-            // Extraer las cabeceras de las columnas
-            const headers = Object.keys(data[0]);
-            const headerRow = d3.select("#table-header");
-            headers.forEach(header => {
-                headerRow.append("th").text(header);
-            });
+   <script>
+    d3.json("datos.json").then(data => {
+        const headers = Object.keys(data[0]);
+        const headerRow = d3.select("#table-header");
+        headers.forEach(header => {
+            headerRow.append("th").text(header);
+        });
 
-            // Llenar la tabla con datos
-            const body = d3.select("#table-body");
-            data.forEach(row => {
-                const tableRow = body.append("tr");
-                headers.forEach(header => {
-                    tableRow.append("td").text(row[header]);
-                });
+        const body = d3.select("#table-body");
+        data.forEach(row => {
+            const tableRow = body.append("tr");
+            headers.forEach(header => {
+                tableRow.append("td").text(row[header]);
             });
-        }).catch(error => console.log("Error cargando el archivo CSV:", error));
-    </script>
+        });
+    }).catch(error => console.log("Error cargando el archivo JSON:", error));
+</script>
+
 </body>
 </html>
