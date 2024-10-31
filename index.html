@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualización de Datos en Tabla</title>
+    <title>Visualización de Datos en CSV</title>
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <style>
         /* Estilos mínimos para asegurar la estructura de la tabla */
@@ -22,7 +22,7 @@
     </style>
 </head>
 <body>
-    <h1>Datos desde datos.json</h1>
+    <h1>Datos desde datos.csv</h1>
     <table id="data-table">
         <thead>
             <tr id="table-header"></tr>
@@ -31,8 +31,8 @@
     </table>
 
     <script>
-        // Cargar y mostrar datos desde datos.json
-        d3.json("datos.json").then(data => {
+        // Cargar y mostrar datos desde datos.csv
+        d3.csv("datos.csv").then(data => {
             // Crear encabezados de la tabla
             const headers = Object.keys(data[0]);
             const headerRow = d3.select("#table-header");
@@ -48,7 +48,7 @@
                     tableRow.append("td").text(row[header] || "");  // Añadir cada valor en su columna correspondiente
                 });
             });
-        }).catch(error => console.log("Error cargando el archivo JSON:", error));
+        }).catch(error => console.log("Error cargando el archivo CSV:", error));
     </script>
 </body>
 </html>
